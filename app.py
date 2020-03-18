@@ -8,7 +8,7 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
-user_id = []
+user_id = {}
 
 app = Flask(__name__)
 
@@ -37,11 +37,11 @@ def callback():
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
     if(event.source.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
-        for userid in user_id:
+        for userid in user_id.keys():
             line_bot_api.push_message(userid, message)
 
     line_bot_api.reply_message(event.reply_token, message)
-    user_id.append(event.source.user_id)
+    user_id[event.source.user_id]: "RUNOOB"
 '''
 #admin
 app2 = Flask(__name__)
