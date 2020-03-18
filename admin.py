@@ -11,12 +11,13 @@ from linebot.models import *
 app = Flask(__name__)
 
 # Channel Access Token
-line_bot_api = LineBotApi('D4jP2o+UJxNhEPro+12EqFl7HUa8iHyfabFIxtTXjYx/tLm2QAEDJqY2f6KmrqfDepOhTigfWzCJS2ttTjQXSNcA0RHsLqS+6d2W3/LSzWxYbRaAyIhrsnRxxRNuAxXaUiOg6rkqUpwSCEmtqFL6+QdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('ZS0OVcr4EZb+XWe0ot/Etpb3hufOWtLONcE8I4TNmjjU0t83+1GAYOldPEbwgf2IBUOZLte/5qUJFQJ/nSnnKB/6RlfWYUSWHZxCkGXkteyqKc9F+UzyimnCZUviB24ZhT+7vSNnTJP6xuA/+IgniwdB04t89/1O/w1cDnyilFU=')
 # Channel Secret
-handler = WebhookHandler('91d2018622705a3117d64eb67044f573')
-
+handler = WebhookHandler('3261bde6e8fdf4087dc2d2da1e68886d')
+#main
+line_bot_api_main = LineBotApi('D4jP2o+UJxNhEPro+12EqFl7HUa8iHyfabFIxtTXjYx/tLm2QAEDJqY2f6KmrqfDepOhTigfWzCJS2ttTjQXSNcA0RHsLqS+6d2W3/LSzWxYbRaAyIhrsnRxxRNuAxXaUiOg6rkqUpwSCEmtqFL6+QdB04t89/1O/w1cDnyilFU=')
 # 監聽所有來自 /callback 的 Post Request
-@app.route("/callback", methods=['POST'])
+@app.route("/admin", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
@@ -33,12 +34,8 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text + "slds")
-    print(event.push_token)
-    line_bot_api.reply_message(event.reply_token, message)
-    message2 = TextSendMessage(text= 'No')
-    line_bot_api.push_message(event.push_token, message2)
-
+    command = TextSendMessage(text=event.message.text)
+    line_bot_api_main.push_message(event.push_token, command)
 
 
 import os
