@@ -33,10 +33,10 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text + "slds")
+    message = TextSendMessage(text=event.message.text)
     line_bot_api.reply_message(event.reply_token, message)
     message2 = TextSendMessage(text= 'No')
-    line_bot_api.push_message(event.push_token, message2)
+    line_bot_api.push_message(event.source.user_id, message2)
 
 
 
