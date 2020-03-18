@@ -39,8 +39,11 @@ def handle_message(event):
     if(event.source.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
         login = TextSendMessage(text="login success")
         line_bot_api.reply_message(event.reply_token, login)
+
         for userid in user_id.keys():
             line_bot_api.push_message(userid, message)
+            user = TextSendMessage(text = userid)
+            line_bot_api.reply_message(event.reply_token, user)
     else:
         line_bot_api.reply_message(event.reply_token, message)
         user_id[event.source.user_id]: "RUNOOB"
