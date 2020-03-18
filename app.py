@@ -8,6 +8,8 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 
+user_id = []
+
 app = Flask(__name__)
 
 # Channel Access Token
@@ -37,8 +39,33 @@ def handle_message(event):
     line_bot_api.reply_message(event.reply_token, message)
     message2 = TextSendMessage(text= 'No')
     line_bot_api.push_message(event.source.user_id, message2)
+    user_id.append(event.source.user_id)
 
-
+#admin
+app2 = Flask(__name__)
+# Channel Access Token
+line_bot_api2 = LineBotApi('ZS0OVcr4EZb+XWe0ot/Etpb3hufOWtLONcE8I4TNmjjU0t83+1GAYOldPEbwgf2IBUOZLte/5qUJFQJ/nSnnKB/6RlfWYUSWHZxCkGXkteyqKc9F+UzyimnCZUviB24ZhT+7vSNnTJP6xuA/+IgniwdB04t89/1O/w1cDnyilFU=')
+# Channel Secret
+handler2 = WebhookHandler('3261bde6e8fdf4087dc2d2da1e68886d')
+# 監聽所有來自 /callback 的 Post Request
+@app.route("/admin", methods=['POST'])
+def admin():
+    # get X-Line-Signature header value
+    signature2 = request.headers['X-Line-Signature']
+    # get request body as text
+    body2 = request.get_data(as_text=True)
+    app2.logger.info("Request body: " + body)
+    # handle webhook body
+    try:
+        handler2.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+    return 'OK'
+@handler2.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    message = TextSendMessage(text= event.message.text)
+    for userid in user_id:
+        line_bot_api.push_message(user_id, message)
 
 import os
 if __name__ == "__main__":
