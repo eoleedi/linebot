@@ -54,16 +54,17 @@ def admin():
     signature2 = request.headers['X-Line-Signature']
     # get request body as text
     body2 = request.get_data(as_text=True)
-    app2.logger.info("Request body: " + body)
+    app2.logger.info("Request body: " + body2)
     # handle webhook body
     try:
-        handler2.handle(body, signature)
+        handler2.handle(body2, signature2)
     except InvalidSignatureError:
         abort(400)
     return 'OK'
 @handler2.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text= event.message.text)
+    line_bot_api2.reply_message(event.reply_token, message)
     for userid in user_id:
         line_bot_api.push_message(user_id, message)
 
