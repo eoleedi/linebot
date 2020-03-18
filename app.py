@@ -36,11 +36,13 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token, message)
-    message2 = TextSendMessage(text= 'No')
-    line_bot_api.push_message(event.source.user_id, message2)
-    user_id.append(event.source.user_id)
+    if(event.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
+        for userid in user_id:
+            line_bot_api.push_message(userid, message)
 
+    line_bot_api.reply_message(event.reply_token, message)
+    user_id.append(event.source.user_id)
+'''
 #admin
 app2 = Flask(__name__)
 # Channel Access Token
@@ -63,11 +65,13 @@ def admin():
     return 'OK'
 @handler2.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    if(event.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
+
     message = TextSendMessage(text= event.message.text)
     line_bot_api2.reply_message(event.reply_token, message)
     for userid in user_id:
         line_bot_api.push_message(user_id, message)
-
+'''
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
