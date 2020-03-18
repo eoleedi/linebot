@@ -39,14 +39,20 @@ def handle_message(event):
     if(event.source.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
         login = TextSendMessage(text="login success")
         line_bot_api.reply_message(event.reply_token, login)
-
-        for userid in user_id.keys():
+        f = open('user_id.txt', 'r')
+        for userid in f.readlines():
             line_bot_api.push_message(userid, message)
             user = TextSendMessage(text = userid)
             line_bot_api.reply_message(event.reply_token, user)
+        f.close()
     else:
         line_bot_api.reply_message(event.reply_token, message)
-        user_id[event.source.user_id]: "RUNOOB"
+        fo = open('user_id.txt', 'r')
+        if event.source.user_id not in fo.read():
+            f = open('user_id.txt', 'w+')
+            f.write(event.source.user_id + '\n')
+        f.close()
+        fo.close()
 '''
 #admin
 app2 = Flask(__name__)
