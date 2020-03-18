@@ -36,7 +36,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
-    if(event.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
+    if(event.source.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
         for userid in user_id:
             line_bot_api.push_message(userid, message)
 
