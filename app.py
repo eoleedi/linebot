@@ -36,15 +36,21 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message = TextSendMessage(text=event.message.text)
+    if(message == "我要成為管理者"):
+        roomIdRequest = TextSendMessage(text = "請輸入roomid")
+        line_bot_api.reply_message(event.reply_token, roomIdRequest)
+
     if(event.source.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
-        login = TextSendMessage(text="login success")
-        line_bot_api.reply_message(event.reply_token, login)
-        f = open('user_id.txt', 'r')
-        for userid in f.readlines():
-            line_bot_api.push_message(userid, message)
-            user = TextSendMessage(text = userid)
-            line_bot_api.reply_message(event.reply_token, user)
-        f.close()
+        if(message == 'login'):
+            #login
+            login = TextSendMessage(text="login success")
+            line_bot_api.reply_message(event.reply_token, login)
+            f_userid = open('user_id.txt', 'r')
+            for userid in f_userid.readlines():
+                line_bot_api.push_message(userid, message)
+                user = TextSendMessage(text = userid)
+                line_bot_api.reply_message(event.source.user_id, user)
+            f_userid.close()
     else:
         line_bot_api.reply_message(event.reply_token, message)
         fo = open('user_id.txt', 'r')
