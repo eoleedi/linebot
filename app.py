@@ -46,26 +46,25 @@ def handle_message(event):
     status = cursor.fetchone()
 
     message = event.message.text
-
+    print(message)
     if(status == "Addroomid"):
         if(message == "break"):
-            cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",event.source.user_id, '')
+            cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
             conn.commit()
             conn.close()
             return 0
         #檢查 roomid 存在
-        if (cursor.execute("SELECT COUNT(*) from rooms where roomid = %s", message) == 0):
+        if (cursor.execute("SELECT COUNT(*) from rooms where roomid = %s", [message]) == 0):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom failed"))
             conn.commit()
             conn.close()
             return 0
         else:    
-            cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", event.source.user_id, message)
+            cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
             print('admin add success')
 
-    if(message.find("管理者")):
-        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",event.source.user_id, 'Addroomid')
-        conn.commit()
+    if(message.find("管理者") != -1):
+        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, 'Addroomid'])
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
 
