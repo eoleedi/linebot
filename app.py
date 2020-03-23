@@ -41,8 +41,8 @@ def handle_message(event):
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",event.source.user_id, '')
-    cursor.execute("SELECT status from users where userID = %s", event.source.user_id)
+    cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
+    cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
 
     message = event.message.text
