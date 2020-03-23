@@ -7,6 +7,14 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
+import psycopg2
+import os
+import re
+DATABASE_URL = os.environ['DATABASE_URL']
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+cursor=conn.cursor()
+
 
 user_id = {}
 
@@ -35,8 +43,31 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    cursor=conn.cursor()
     message = TextSendMessage(text=event.message.text)
-    if(message == "我要成為管理者"):
+
+    cursor.execute("SELECT status from users where userID = %s",event.source.user_id)
+    status = cursor.fetchone()
+
+    if(status == "Addroomid"):
+        if(message == "break"):
+            cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",event.source.user_id, '')
+            conn.commit()
+            conn.close()
+            return 0
+        #檢查 roomid 存在
+        if (cursor.execute("SELECT COUNT(*) from rooms where roomid = %s", message) == 0):
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom failed"))
+            conn.commit()
+            conn.close()
+            return 0
+        else:    
+            cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", event.source.user_id, message)
+            print('admin add success')
+
+    if(message.find("管理者")):
+        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",event.source.user_id, 'Addroomid')
+        conn.commit()
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
 
@@ -59,37 +90,16 @@ def handle_message(event):
             f.write(event.source.user_id + '\n')
         f.close()
         fo.close()
-'''
-#admin
-app2 = Flask(__name__)
-# Channel Access Token
-line_bot_api2 = LineBotApi('ZS0OVcr4EZb+XWe0ot/Etpb3hufOWtLONcE8I4TNmjjU0t83+1GAYOldPEbwgf2IBUOZLte/5qUJFQJ/nSnnKB/6RlfWYUSWHZxCkGXkteyqKc9F+UzyimnCZUviB24ZhT+7vSNnTJP6xuA/+IgniwdB04t89/1O/w1cDnyilFU=')
-# Channel Secret
-handler2 = WebhookHandler('3261bde6e8fdf4087dc2d2da1e68886d')
-# 監聽所有來自 /callback 的 Post Request
-@app2.route("/admin", methods=['POST'])
-def admin():
-    # get X-Line-Signature header value
-    signature2 = request.headers['X-Line-Signature']
-    # get request body as text
-    body2 = request.get_data(as_text=True)
-    app2.logger.info("Request body: " + body2)
-    # handle webhook body
-    try:
-        handler2.handle(body2, signature2)
-    except InvalidSignatureError:
-        abort(400)
-    return 'OK'
-@handler2.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    if(event.user_id == 'Uc38ec3a6672b3b5033dddc4851ad4893'): 
 
-    message = TextSendMessage(text= event.message.text)
-    line_bot_api2.reply_message(event.reply_token, message)
-    for userid in user_id:
-        line_bot_api.push_message(user_id, message)
-'''
-import os
+    conn.commit()
+    conn.close()
+
+@handler.add(PostbackEvent)
+def handle_postback(event):
+    postback = event.postback.data
+
+
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
