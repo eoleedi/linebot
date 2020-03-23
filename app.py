@@ -41,8 +41,10 @@ def handle_message(event):
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
+    #第一次加入，儲存userid
+    
     if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) == 0):
-        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
+        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',event.source.displayName])
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
 
