@@ -41,15 +41,18 @@ def handle_message(event):
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
+    if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) == 0):
+        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
 
     message = event.message.text
     print(message)
     if(status == "Addroomid"):
+        #離開管理者模式
         if(message == "break"):
             cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, ''])
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "離開加入管理者模式"))
             conn.commit()
             conn.close()
             return 0
@@ -64,7 +67,7 @@ def handle_message(event):
             print('admin add success')
 
     if(message.find("管理者") != -1):
-        cursor.execute("INSERT INTO users(userID,status) VALUES(%s,%s)",[event.source.user_id, 'Addroomid'])
+        cursor.execute("INSERT INTO users(status) VALUES(%s) where userid = %s",['Addroomid', event.source.user_id])
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
 
