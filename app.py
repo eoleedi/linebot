@@ -38,7 +38,9 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    cursor=conn.cursor()
+    DATABASE_URL = os.environ['DATABASE_URL']
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cursor = conn.cursor()
     message = TextSendMessage(text=event.message.text)
 
     cursor.execute("SELECT status from users where userID = %s",event.source.user_id)
@@ -100,9 +102,6 @@ if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
 
-    DATABASE_URL = os.environ["DATABASE_URL"]
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    cursor=conn.cursor()
 
 
 #note
