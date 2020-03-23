@@ -44,7 +44,7 @@ def handle_message(event):
     #第一次加入，儲存userid
     
     if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) != 0):
-        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',event.source.displayName])
+        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',event.displayName])
 
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
