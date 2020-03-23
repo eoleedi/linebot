@@ -10,11 +10,6 @@ from linebot.models import *
 import psycopg2
 import os
 import re
-DATABASE_URL = os.environ["postgres://nwajksqwsgrbww:0ecdacf3ab35c8b3ff3bbe0113830ed1b9078eef57dbe18dbc721dbee4047ca9@ec2-52-203-160-194.compute-1.amazonaws.com:5432/d1jihonate44gb"]
-
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-cursor=conn.cursor()
-
 
 user_id = {}
 
@@ -104,7 +99,7 @@ if __name__ == "__main__":
   
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-    
+
     DATABASE_URL = os.environ["DATABASE_URL"]
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor=conn.cursor()
