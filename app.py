@@ -55,7 +55,6 @@ def handle_message(event):
     #第一次加入，儲存userid
     cursor.execute("SELECT * FROM users WHERE userid = %s", [event.source.user_id])
     cursor.fetchall()
-    print(cursor.rowcount)
     if (cursor.rowcount == 0):
         cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s,%s)",[event.source.user_id, '',profile.display_name])
         conn.commit()
@@ -64,12 +63,12 @@ def handle_message(event):
     #get user status
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
-
+    print(status)
     message = event.message.text
 
     if(status == "AddRoomId"):
         #離開管理者模式
-        if(message == "break"):
+        if(message == "break" or message == "Break"):
             cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s",['',event.source.user_id])
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "離開加入管理者模式"))
             conn.commit()
