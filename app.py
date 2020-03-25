@@ -63,7 +63,7 @@ def handle_message(event):
 
     message = event.message.text
 
-    if(status == "Addroomid"):
+    if(status == "AddRoomId"):
         #離開管理者模式
         if(message == "break"):
             cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s",['',event.source.user_id])
@@ -74,7 +74,7 @@ def handle_message(event):
         #檢查 roomid 存在
         ##########
         #不存在
-        if (cursor.execute("SELECT COUNT(*) from rooms where roomID = %s", [message]) == 0): 
+        elif(cursor.execute("SELECT COUNT(*) from rooms where roomID = %s", [message]) == 0): 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom failed"))
             conn.commit()
             conn.close()
@@ -82,18 +82,21 @@ def handle_message(event):
         #存在
         else:    
             cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
+            conn.commit()
             cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s",[event.source.user_id, message])
+            conn.commit()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
     elif(status == "Gaming"):
         pass
 
     if(message.find("管理者") != -1):
-        cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['Addroomid', event.source.user_id])
+        cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['AddRoomId', event.source.user_id])
+        conn.commit()
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
     
 
-    conn.commit()
+
     conn.close()
 
 @handler.add(PostbackEvent)
@@ -110,8 +113,8 @@ def handle_postback(event):
         roomIdSent = TextSendMessage(text = event.source.group_id)
         line_bot_api.reply_message(event.reply_token, roomIdSent)
     
-    cursor.commit()
-    cursor.close()
+    conn.commit()
+    conn.close()
 
 
 @handler.add(JoinEvent)
