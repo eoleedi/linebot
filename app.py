@@ -53,7 +53,7 @@ def handle_message(event):
     cursor = conn.cursor()
 
     #第一次加入，儲存userid
-    if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) != 0):
+    if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) == 0):
         cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s,%s)",[event.source.user_id, '',profile.display_name])
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "your name is " + profile.display_name))
 
@@ -107,7 +107,7 @@ def handle_postback(event):
 
     if(postback == "start" ):
         cursor.execute("INSERT INTO rooms(roomID) VALUES(%s)", [event.source.room])
-        roomIdSent = TextSendMessage(text = event.source.room)
+        roomIdSent = TextSendMessage(text = event.source.roomid)
         line_bot_api.reply_message(event.reply_token, roomIdSent)
     
     cursor.commit()
