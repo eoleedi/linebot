@@ -66,7 +66,7 @@ def handle_message(event):
     print(status == "AddRoomId")
     message = event.message.text
 
-    if(status == "AddRoomId"):
+    if(status ==  'AddRoomId'):
         #離開管理者模式
         if(message == "break" or message == "Break"):
             cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s",['',event.source.user_id])
@@ -93,7 +93,7 @@ def handle_message(event):
             cursor.execute("UPDATE users SET status = %s WHERE userid = %s", ['', event.source.user_id])
             conn.commit()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
-    elif(status == "Gaming"):
+    elif(status == 'Gaming'):
         pass
     elif(message.find("管理者") != -1):
         cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['AddRoomId', event.source.user_id])
