@@ -63,7 +63,7 @@ def handle_message(event):
     #get user status
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()[0]
-    print(status == "AddRoomId")
+    print(status == 'AddRoomId')
     message = event.message.text
 
     if(status ==  'AddRoomId'):
