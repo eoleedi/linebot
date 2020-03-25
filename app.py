@@ -46,7 +46,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
-    displayName = re.match(r'\"displayName\": "([^\"]+)').group(1)
+    displayName = re.search(r'\"displayName\": "([^\"]+)').group(1)
     #connect to database
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
