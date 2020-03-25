@@ -53,7 +53,7 @@ def handle_message(event):
     cursor = conn.cursor()
 
     #第一次加入，儲存userid
-    cursor.execute("SELECT COUNT(userid) from users where userid = %s", [event.source.user_id])
+    cursor.execute("SELECT * FROM users WHERE userid = %s", [event.source.user_id])
     cursor.fetchall()
     print(cursor.rowcount)
     if (cursor.rowcount == 0):
