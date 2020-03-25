@@ -78,14 +78,16 @@ def handle_message(event):
         #檢查 roomid 存在
         ##########
         #不存在
-        elif(cursor.execute("SELECT COUNT(*) from rooms where roomID = %s", [message]) == 0): 
+        cursor.execute("SELECT COUNT(*) from rooms where roomID = %s", [message])
+        cursor.fetchall()
+        if( cursor.rowcount == 0): 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom failed"))
             conn.commit()
             conn.close()
             return 0
         #存在
         else:    
-            cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
+            cursor.execute("INSERT INTO admins(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
             conn.commit()
             cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s", [event.source.user_id, message])
             conn.commit()
