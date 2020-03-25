@@ -53,8 +53,9 @@ def handle_message(event):
     cursor = conn.cursor()
 
     #第一次加入，儲存userid
-    print("count = " + cursor.execute("SELECT COUNT(userid) from users where userid = %s", [event.source.user_id]))
-    if (cursor.execute("SELECT COUNT(userid) from users where userid = %s", [event.source.user_id]) == 0):
+    cursor.execute("SELECT COUNT(userid) from users where userid = %s", [event.source.user_id])
+    cursor.fetchall()
+    if ( cursor.rowcount == 0):
         cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s,%s)",[event.source.user_id, '',profile.display_name])
         conn.commit()
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "your name is " + profile.display_name))
