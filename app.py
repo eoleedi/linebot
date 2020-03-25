@@ -83,17 +83,14 @@ def handle_message(event):
             cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
             cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s",[event.source.user_id, message])
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
-
-   
     elif(status == "Gaming"):
+        pass
 
     if(message.find("管理者") != -1):
         cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['Addroomid', event.source.user_id])
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
     
-
-
 
     conn.commit()
     conn.close()
