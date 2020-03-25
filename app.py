@@ -63,7 +63,7 @@ def handle_message(event):
     #get user status
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()[0]
-    print(status)
+    print(status == "AddRoomId")
     message = event.message.text
 
     if(status == "AddRoomId"):
@@ -95,13 +95,11 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
     elif(status == "Gaming"):
         pass
-
     elif(message.find("管理者") != -1):
         cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['AddRoomId', event.source.user_id])
         conn.commit()
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
-    
     else:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "your name is " + profile.display_name))
 
