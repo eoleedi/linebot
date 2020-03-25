@@ -106,7 +106,7 @@ def handle_postback(event):
     cursor = conn.cursor()
 
     if(postback == "start" ):
-        cursor.execute("INSERT INTO rooms(roomID) VALUES(%s)", [event.source.room])
+        cursor.execute("INSERT INTO rooms(roomID) VALUES(%s)", [event.source.roomid])
         roomIdSent = TextSendMessage(text = event.source.roomid)
         line_bot_api.reply_message(event.reply_token, roomIdSent)
     
