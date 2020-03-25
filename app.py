@@ -117,10 +117,10 @@ def handle_postback(event):
 def handle_join(event):
     introduction = "我是你們的資工小精靈，接下來的越獄之路，我會在這裡陪伴你們的"
     buttons_template = TemplateSendMessage(
-        alt_text=introduction,
+        alt_text = introduction,
         template = ButtonsTemplate(
-            title = introduction,
-            text = "",
+            title = "資工小導航",
+            text = introduction,
             actions=[
                 PostbackTemplateAction(
                     label = "start",
