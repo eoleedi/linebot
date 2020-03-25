@@ -59,7 +59,7 @@ def handle_message(event):
     if (cursor.rowcount == 0):
         cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s,%s)",[event.source.user_id, '',profile.display_name])
         conn.commit()
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "your name is " + profile.display_name))
+        
 
     #get user status
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
@@ -93,12 +93,14 @@ def handle_message(event):
     elif(status == "Gaming"):
         pass
 
-    if(message.find("管理者") != -1):
+    elif(message.find("管理者") != -1):
         cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['AddRoomId', event.source.user_id])
         conn.commit()
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
     
+    else:
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "your name is " + profile.display_name))
 
 
     conn.close()
