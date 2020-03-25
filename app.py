@@ -87,7 +87,9 @@ def handle_message(event):
         else:    
             cursor.execute("INSERT INTO admin(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
             conn.commit()
-            cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s",[event.source.user_id, message])
+            cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s", [event.source.user_id, message])
+            conn.commit()
+            cursor.execute("UPDATE users SET status = %s WHERE userid = %s", ['', event.source.user_id])
             conn.commit()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
     elif(status == "Gaming"):
