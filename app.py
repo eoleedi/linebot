@@ -12,7 +12,6 @@ import os
 import re
 import requests
 
-user_id = {}
 
 app = Flask(__name__)
 
@@ -46,7 +45,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     displayName = getDisplayName(event.source.user_id)
-    
+    print(displayName)
     #connect to database
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
