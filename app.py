@@ -25,7 +25,7 @@ def getDisplayName(userid):
     "Authorization: Bearer D4jP2o+UJxNhEPro+12EqFl7HUa8iHyfabFIxtTXjYx/tLm2QAEDJqY2f6KmrqfDepOhTigfWzCJS2ttTjQXSNcA0RHsLqS+6d2W3/LSzWxYbRaAyIhrsnRxxRNuAxXaUiOg6rkqUpwSCEmtqFL6+QdB04t89/1O/w1cDnyilFU="
     }
     response = requests.get('https://api.line.me/v2/bot/profile/'+ userid, headers= header)
-    return response
+    return response.displayName
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
