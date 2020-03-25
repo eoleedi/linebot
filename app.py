@@ -24,8 +24,9 @@ handler = WebhookHandler('91d2018622705a3117d64eb67044f573')
 header = {
     "Authorization: Bearer D4jP2o+UJxNhEPro+12EqFl7HUa8iHyfabFIxtTXjYx/tLm2QAEDJqY2f6KmrqfDepOhTigfWzCJS2ttTjQXSNcA0RHsLqS+6d2W3/LSzWxYbRaAyIhrsnRxxRNuAxXaUiOg6rkqUpwSCEmtqFL6+QdB04t89/1O/w1cDnyilFU="
 }
-def getDisplayName():
-
+def getDisplayName(userid):
+    response = requests.get('https://api.line.me/v2/bot/profile/'+ userid, headers= header)
+    return response
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -44,8 +45,8 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-
-    response = requests.get('https://api.line.me/v2/bot/profile/'+ event.source.user_id, headers= header)
+    displayName = getDisplayName(event.source.user_id)
+    
     
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -53,7 +54,7 @@ def handle_message(event):
     #第一次加入，儲存userid
     
     if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) != 0):
-        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',response.DisplayName])
+        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',displayName])
 
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
     status = cursor.fetchone()
