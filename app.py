@@ -126,7 +126,11 @@ def handle_join(event):
                     label = "start",
                     text = "start",
                     data = "start"
-                )
+                ),
+                MessageTemplateAction(
+                    label='ButtonsTemplate',
+                    text='ButtonsTemplate'
+                ),
             ]
         )
     )
