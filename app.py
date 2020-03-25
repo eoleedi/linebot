@@ -13,6 +13,7 @@ import re
 import requests
 
 
+
 app = Flask(__name__)
 
 # Channel Access Token
@@ -45,7 +46,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
-    print(profile)
+    displayName = re.match(r'\"displayName\": "([^\"]+)').group(1)
     #connect to database
     DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -53,7 +54,7 @@ def handle_message(event):
 
     #第一次加入，儲存userid
     if (cursor.execute("SELECT COUNT(*) from users where userid = %s", [event.source.user_id]) != 0):
-        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',profile.displayName])
+        cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s)",[event.source.user_id, '',displayName])
 
     #get user status
     cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
