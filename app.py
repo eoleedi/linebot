@@ -65,10 +65,10 @@ def handle_message(event):
     status = cursor.fetchone()[0]
     print(type(status))
     print(status)
-    print(status == 'AddRoomId')
+    print(status == "AddRoomId ")
     message = event.message.text
 
-    if(status ==  'AddRoomId'):
+    if(status ==  "AddRoomId"):
         #離開管理者模式
         if(message == "break" or message == "Break"):
             cursor.execute("UPDATE USERS SET status =%s WHERE userid =%s",['',event.source.user_id])
