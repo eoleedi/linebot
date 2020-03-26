@@ -53,7 +53,7 @@ def handle_message(event):
     cursor = conn.cursor()
 
     #第一次加入，儲存userid
-    cursor.execute("SELECT * FROM users WHERE userid = %s", [event.source.user_id])
+    cursor.execute("SELECT * FROM users WHERE userid =%s", [event.source.user_id])
     cursor.fetchall()
     if (cursor.rowcount == 0):
         cursor.execute("INSERT INTO users(userID,status,displayName) VALUES(%s,%s,%s)",[event.source.user_id, '',profile.display_name])
@@ -61,7 +61,7 @@ def handle_message(event):
         
 
     #get user status
-    cursor.execute("SELECT status from users where userID = %s", [event.source.user_id])
+    cursor.execute("SELECT status from users where userID =%s", [event.source.user_id])
     status = cursor.fetchone()[0]
     print(type(status))
     print(status)
@@ -71,7 +71,7 @@ def handle_message(event):
     if(status ==  'AddRoomId'):
         #離開管理者模式
         if(message == "break" or message == "Break"):
-            cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s",['',event.source.user_id])
+            cursor.execute("UPDATE USERS SET status =%s WHERE userid =%s",['',event.source.user_id])
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "離開加入管理者模式"))
             conn.commit()
             conn.close()
@@ -79,7 +79,7 @@ def handle_message(event):
         #檢查 roomid 存在
         ##########
         #不存在
-        cursor.execute("SELECT COUNT(*) from rooms where roomID = %s", [message])
+        cursor.execute("SELECT COUNT(*) from rooms where roomID =%s", [message])
         cursor.fetchall()
         if( cursor.rowcount == 0): 
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom failed"))
@@ -90,15 +90,15 @@ def handle_message(event):
         else:    
             cursor.execute("INSERT INTO admins(adminID,roomID) VALUES(%s,%s)", [event.source.user_id, message])
             conn.commit()
-            cursor.execute("UPDATE rooms SET adminID = %s WHERE roomID = %s", [event.source.user_id, message])
+            cursor.execute("UPDATE rooms SET adminID =%sWHERE roomID =%s", [event.source.user_id, message])
             conn.commit()
-            cursor.execute("UPDATE users SET status = %s WHERE userid = %s", ['', event.source.user_id])
+            cursor.execute("UPDATE users SET status =%sWHERE userid =%s", ['', event.source.user_id])
             conn.commit()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text = "addroom success"))
     elif(status == 'Gaming'):
         pass
     elif(message.find("管理者") != -1):
-        cursor.execute("UPDATE USERS SET status = %s WHERE userid = %s ",['AddRoomId', event.source.user_id])
+        cursor.execute("UPDATE USERS SET status =%sWHERE userid =%s ",['AddRoomId', event.source.user_id])
         conn.commit()
         roomIdRequest = TextSendMessage(text = "請輸入roomid")
         line_bot_api.reply_message(event.reply_token, roomIdRequest)
